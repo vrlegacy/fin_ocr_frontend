@@ -6,6 +6,7 @@ import { DashboardPage } from "./pages/dashboard";
 import { ResultPage } from "./pages/result";
 import { HistoryPage } from "./pages/history";
 import { SettingsPage } from "./pages/settings";
+import { OcrEntryPage } from "./pages/ocr-entry";
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard",
         Component: DashboardPage,
+      },
+      {
+        path: "/ocr-entry",
+        Component: OcrEntryPage,
       },
       {
         path: "/history",

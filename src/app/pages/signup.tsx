@@ -17,18 +17,18 @@ export function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#F8FAFC]">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#F5F5F5]">
       <div 
         className="w-full max-w-[1000px] min-h-[680px] bg-white flex flex-col md:flex-row overflow-hidden" 
         style={{ borderRadius: '24px', boxShadow: '0 10px 40px rgba(0, 0, 0, 0.06)', border: '1px solid rgba(226, 232, 240, 0.8)' }}
       >
         {/* Left Panel - Emerald branding background */}
-        <div className="w-full md:w-1/2 flex items-center justify-center py-12 md:py-0" style={{ background: '#065F46' }}>
+        <div className="w-full md:w-1/2 flex items-center justify-center py-12 md:py-0" style={{ background: '#008060' }}>
           <div className="px-12 text-center">
             {/* White Logo Box */}
             <div 
               className="w-16 h-16 mx-auto mb-8 flex items-center justify-center font-bold text-2xl border border-white/10 shadow-sm" 
-              style={{ background: 'white', color: '#065F46', borderRadius: '16px' }}
+              style={{ background: 'white', color: '#008060', borderRadius: '16px' }}
             >
               N
             </div>
@@ -52,7 +52,7 @@ export function SignupPage() {
                 'View past uploads anytime'
               ].map((feature, index) => (
                 <div key={index} className="flex items-center gap-3 text-white/90">
-                  <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: '#10B981' }}>
+                  <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: '#008060' }}>
                     <Check size={12} className="text-white" />
                   </div>
                   <span style={{ fontSize: '15px', fontWeight: '500' }}>{feature}</span>
@@ -66,7 +66,7 @@ export function SignupPage() {
         <div className="w-full md:w-1/2 flex items-center justify-center px-6 md:px-16 py-12 md:py-0">
           <div className="w-full max-w-md">
             {/* Badge */}
-            <div className="inline-block px-4 py-1.5 mb-6 rounded-full text-xs font-semibold" style={{ background: '#F0FDF4', color: '#047857' }}>
+            <div className="inline-block px-4 py-1.5 mb-6 rounded-full text-xs font-semibold" style={{ background: '#E6F2EF', color: '#008060' }}>
               Create account
             </div>
 
@@ -88,7 +88,7 @@ export function SignupPage() {
                   placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="h-13 rounded-xl border-gray-200 focus-visible:ring-[#065F46] focus-visible:border-[#065F46]"
+                  className="h-13 rounded-xl border-gray-200 focus-visible:ring-[#008060] focus-visible:border-[#008060]"
                   style={{ background: 'white', border: '1px solid #E5E7EB' }}
                   required
                 />
@@ -100,7 +100,7 @@ export function SignupPage() {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-13 rounded-xl border-gray-200 focus-visible:ring-[#065F46] focus-visible:border-[#065F46]"
+                  className="h-13 rounded-xl border-gray-200 focus-visible:ring-[#008060] focus-visible:border-[#008060]"
                   style={{ background: 'white', border: '1px solid #E5E7EB' }}
                   required
                 />
@@ -111,7 +111,7 @@ export function SignupPage() {
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full h-13 px-3 rounded-xl border border-gray-200 outline-none focus:border-[#065F46] focus:ring-1 focus:ring-[#065F46] transition-colors text-gray-500 bg-white"
+                  className="w-full h-13 px-3 rounded-xl border border-gray-200 outline-none focus:border-[#008060] focus:ring-1 focus:ring-[#008060] transition-colors text-gray-500 bg-white"
                   style={{ fontSize: "14px", fontWeight: "500" }}
                   required
                 >
@@ -129,7 +129,7 @@ export function SignupPage() {
                   placeholder="Create a password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-13 rounded-xl border-gray-200 focus-visible:ring-[#065F46] focus-visible:border-[#065F46]"
+                  className="h-13 rounded-xl border-gray-200 focus-visible:ring-[#008060] focus-visible:border-[#008060]"
                   style={{ background: 'white', border: '1px solid #E5E7EB' }}
                   required
                 />
@@ -138,7 +138,7 @@ export function SignupPage() {
               <Button
                 type="submit"
                 className="w-full h-13 rounded-xl text-white font-semibold transition-opacity hover:opacity-95 cursor-pointer"
-                style={{ background: '#065F46' }}
+                style={{ background: '#008060' }}
               >
                 Create account
               </Button>
@@ -155,7 +155,7 @@ export function SignupPage() {
                   type="button"
                   onClick={() => navigate('/')}
                   className="font-semibold hover:underline bg-none border-none cursor-pointer"
-                  style={{ color: '#065F46' }}
+                  style={{ color: '#008060' }}
                 >
                   Sign in
                 </button>

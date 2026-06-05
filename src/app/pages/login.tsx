@@ -14,7 +14,7 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-6 relative overflow-hidden">
+    <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center px-6 relative overflow-hidden">
       {/* Background Accent - Emerald blur */}
       <div className="absolute top-0 left-0 w-full overflow-hidden pointer-events-none">
         <div
@@ -35,7 +35,7 @@ export function LoginPage() {
             className="w-16 h-16 mx-auto mb-5 rounded-2xl flex items-center justify-center font-bold text-2xl border border-slate-200/50 shadow-sm"
             style={{
               background: "white",
-              color: "#065F46",
+              color: "#008060",
             }}
           >
             N
@@ -89,7 +89,7 @@ export function LoginPage() {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 px-4 rounded-xl border border-gray-200 outline-none focus:border-[#065F46] transition-colors"
+                className="w-full h-12 px-4 rounded-xl border border-gray-200 outline-none focus:border-[#008060] transition-colors"
                 required
               />
             </div>
@@ -104,7 +104,7 @@ export function LoginPage() {
                 placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full h-12 px-4 rounded-xl border border-gray-200 outline-none focus:border-[#065F46] transition-colors"
+                className="w-full h-12 px-4 rounded-xl border border-gray-200 outline-none focus:border-[#008060] transition-colors"
                 required
               />
             </div>
@@ -114,7 +114,7 @@ export function LoginPage() {
                 type="button"
                 className="text-sm font-semibold hover:underline cursor-pointer"
                 style={{
-                  color: "#065F46",
+                  color: "#008060",
                 }}
               >
                 Forgot Password?
@@ -125,7 +125,7 @@ export function LoginPage() {
               type="submit"
               className="w-full h-12 rounded-xl text-white font-semibold flex items-center justify-center gap-2 transition hover:opacity-95 cursor-pointer shadow-sm"
               style={{
-                background: "#065F46",
+                background: "#008060",
               }}
             >
               Sign In
@@ -174,7 +174,7 @@ export function LoginPage() {
               onClick={() => navigate("/signup")}
               className="font-semibold hover:underline cursor-pointer"
               style={{
-                color: "#065F46",
+                color: "#008060",
               }}
             >
               Create Account

@@ -68,7 +68,7 @@ export function DashboardPage() {
       value: "1,248",
       subtext: "+12% vs last month",
       icon: Files,
-      iconColor: "#065F46",
+      iconColor: "#008060",
     },
 
     {
@@ -182,9 +182,9 @@ export function DashboardPage() {
         };
       default:
         return {
-          background: "#F1F5F9",
-          color: "#334155",
-          borderColor: "#E2E8F0",
+          background: "#E5E5E5",
+          color: "#3A3A3A",
+          borderColor: "#E5E5E5",
         };
     }
   };
@@ -203,7 +203,7 @@ export function DashboardPage() {
     <div
       className="flex min-h-screen transition-colors duration-300"
       style={{
-        background: theme === 'dark' ? '#0F172A' : '#F8FAFC'
+        background: theme === 'dark' ? '#1C1C1C' : '#F5F5F5'
       }}
     >
       <Sidebar />
@@ -213,13 +213,13 @@ export function DashboardPage() {
         <div className="mb-8">
           <h1
             className="text-3xl font-bold tracking-tight transition-colors"
-            style={{ color: theme === 'dark' ? '#F1F5F9' : '#0F172A' }}
+            style={{ color: theme === 'dark' ? '#E5E5E5' : '#1C1C1C' }}
           >
             Dashboard
           </h1>
           <p
             className="mt-1.5 text-sm transition-colors"
-            style={{ color: theme === 'dark' ? '#94A3B8' : '#64748B' }}
+            style={{ color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E' }}
           >
             Monitor ingestion metrics, process incoming medical
             forms, and audit system logs.
@@ -235,8 +235,8 @@ export function DashboardPage() {
                 key={i}
                 className="rounded-2xl p-5 border flex items-start justify-between transition-all duration-300"
                 style={{
-                  background: theme === 'dark' ? '#1E293B' : '#FFFFFF',
-                  borderColor: theme === 'dark' ? '#334155' : 'rgba(226, 232, 240, 0.6)',
+                  background: theme === 'dark' ? '#2A2A2A' : '#FFFFFF',
+                  borderColor: theme === 'dark' ? '#3A3A3A' : '#E5E5E5',
                   boxShadow: theme === 'dark'
                     ? '0 4px 20px -2px rgba(0, 0, 0, 0.3)'
                     : '0 4px 20px -2px rgba(15, 23, 42, 0.02)',
@@ -245,19 +245,19 @@ export function DashboardPage() {
                 <div>
                   <p
                     className="text-xs font-semibold tracking-wider uppercase mb-1 transition-colors"
-                    style={{ color: theme === 'dark' ? '#94A3B8' : '#94A3B8' }}
+                    style={{ color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E' }}
                   >
                     {metric.label}
                   </p>
                   <h3
                     className="text-2xl font-bold transition-colors"
-                    style={{ color: theme === 'dark' ? '#F1F5F9' : '#0F172A' }}
+                    style={{ color: theme === 'dark' ? '#E5E5E5' : '#1C1C1C' }}
                   >
                     {metric.value}
                   </h3>
                   <span
                     className="text-[11px] font-medium block mt-1 transition-colors"
-                    style={{ color: theme === 'dark' ? '#64748B' : '#94A3B8' }}
+                    style={{ color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E' }}
                   >
                     {metric.subtext}
                   </span>
@@ -265,8 +265,8 @@ export function DashboardPage() {
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center border transition-all"
                   style={{
-                    background: theme === 'dark' ? '#0F172A' : '#F8FAFC',
-                    borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
+                    background: theme === 'dark' ? '#1C1C1C' : '#F5F5F5',
+                    borderColor: theme === 'dark' ? '#3A3A3A' : '#E5E5E5',
                     color: metric.iconColor
                   }}
                 >
@@ -281,8 +281,8 @@ export function DashboardPage() {
         <div
           className="rounded-2xl p-6 border mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-300"
           style={{
-            background: theme === 'dark' ? '#1E293B' : '#FFFFFF',
-            borderColor: theme === 'dark' ? '#334155' : 'rgba(226, 232, 240, 0.6)',
+            background: theme === 'dark' ? '#2A2A2A' : '#FFFFFF',
+            borderColor: theme === 'dark' ? '#3A3A3A' : '#E5E5E5',
             boxShadow: theme === 'dark'
               ? '0 4px 20px -2px rgba(0, 0, 0, 0.3)'
               : '0 4px 20px -2px rgba(15, 23, 42, 0.02)',
@@ -291,13 +291,13 @@ export function DashboardPage() {
           <div>
             <h2
               className="text-lg font-bold transition-colors"
-              style={{ color: theme === 'dark' ? '#F1F5F9' : '#0F172A' }}
+              style={{ color: theme === 'dark' ? '#E5E5E5' : '#1C1C1C' }}
             >
               Process Document
             </h2>
             <p
               className="text-xs mt-0.5 transition-colors"
-              style={{ color: theme === 'dark' ? '#94A3B8' : '#64748B' }}
+              style={{ color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E' }}
             >
               Ingest structured medical configurations via PDF,
               JPG, or PNG files.
@@ -307,9 +307,9 @@ export function DashboardPage() {
           <div>
             <Button
               onClick={() => setIsUploadOpen(true)}
-              className="h-11 px-5 rounded-xl text-white text-sm font-medium transition-all shadow-sm w-full sm:w-auto border border-transparent"
+              className="h-11 px-5 rounded-xl text-white text-sm font-medium transition-all shadow-sm w-full sm:w-auto border border-transparent cursor-pointer"
               style={{
-                background: theme === 'dark' ? '#10B981' : '#065F46',
+                background: "#008060",
               }}
             >
               <Upload size={16} className="mr-2" />
@@ -322,8 +322,8 @@ export function DashboardPage() {
         <div
           className="rounded-3xl border overflow-hidden transition-all duration-300"
           style={{
-            background: theme === 'dark' ? '#1E293B' : '#FFFFFF',
-            borderColor: theme === 'dark' ? '#334155' : 'rgba(226, 232, 240, 0.6)',
+            background: theme === 'dark' ? '#2A2A2A' : '#FFFFFF',
+            borderColor: theme === 'dark' ? '#3A3A3A' : '#E5E5E5',
             boxShadow: theme === 'dark'
               ? '0 10px 30px rgba(0, 0, 0, 0.3)'
               : '0 10px 30px rgba(0,0,0,0.02)',
@@ -332,18 +332,18 @@ export function DashboardPage() {
           {/* Section Controller Panel */}
           <div
             className="p-6 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors"
-            style={{ borderColor: theme === 'dark' ? '#334155' : '#F1F5F9' }}
+            style={{ borderColor: theme === 'dark' ? '#3A3A3A' : '#E5E5E5' }}
           >
             <div>
               <h2
                 className="text-lg font-bold transition-colors"
-                style={{ color: theme === 'dark' ? '#F1F5F9' : '#0F172A' }}
+                style={{ color: theme === 'dark' ? '#E5E5E5' : '#1C1C1C' }}
               >
                 Recent Uploads
               </h2>
               <p
                 className="text-xs mt-0.5 transition-colors"
-                style={{ color: theme === 'dark' ? '#64748B' : '#94A3B8' }}
+                style={{ color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E' }}
               >
                 Real-time tracking of parsed documents.
               </p>
@@ -352,7 +352,7 @@ export function DashboardPage() {
             <div className="relative w-full sm:w-64">
               <Search
                 className="absolute left-3.5 top-1/2 -translate-y-1/2"
-                style={{ color: theme === 'dark' ? '#64748B' : '#94A3B8' }}
+                style={{ color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E' }}
                 size={16}
               />
               <input
@@ -361,9 +361,9 @@ export function DashboardPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full h-10 pl-10 pr-4 text-xs rounded-xl border focus:outline-none transition-all"
                 style={{
-                  background: theme === 'dark' ? '#0F172A' : 'rgba(248, 250, 252, 0.5)',
-                  borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
-                  color: theme === 'dark' ? '#F1F5F9' : '#0F172A',
+                  background: theme === 'dark' ? '#1C1C1C' : 'rgba(248, 250, 252, 0.5)',
+                  borderColor: theme === 'dark' ? '#3A3A3A' : '#E5E5E5',
+                  color: theme === 'dark' ? '#E5E5E5' : '#1C1C1C',
                 }}
               />
             </div>
@@ -376,43 +376,43 @@ export function DashboardPage() {
                 <tr
                   className="border-b text-left transition-all"
                   style={{
-                    background: theme === 'dark' ? '#0F172A' : 'rgba(248, 250, 252, 0.4)',
-                    borderColor: theme === 'dark' ? '#334155' : '#F1F5F9',
+                    background: theme === 'dark' ? '#1C1C1C' : 'rgba(248, 250, 252, 0.4)',
+                    borderColor: theme === 'dark' ? '#3A3A3A' : '#E5E5E5',
                   }}
                 >
                   <th
                     className="py-3 px-6 font-semibold text-xs uppercase tracking-wider transition-colors"
-                    style={{ color: theme === 'dark' ? '#64748B' : '#94A3B8' }}
+                    style={{ color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E' }}
                   >
                     Patient Entity
                   </th>
                   <th
                     className="py-3 px-6 font-semibold text-xs uppercase tracking-wider transition-colors"
-                    style={{ color: theme === 'dark' ? '#64748B' : '#94A3B8' }}
+                    style={{ color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E' }}
                   >
                     Timestamp
                   </th>
                   <th
                     className="py-3 px-6 font-semibold text-xs uppercase tracking-wider transition-colors"
-                    style={{ color: theme === 'dark' ? '#64748B' : '#94A3B8' }}
+                    style={{ color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E' }}
                   >
                     Status Node
                   </th>
                   <th
                     className="py-3 px-6 text-right font-semibold text-xs uppercase tracking-wider transition-colors"
-                    style={{ color: theme === 'dark' ? '#64748B' : '#94A3B8' }}
+                    style={{ color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E' }}
                   >
                     Action
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y" style={{ borderColor: theme === 'dark' ? '#334155' : '#F1F5F9' }}>
+              <tbody className="divide-y" style={{ borderColor: theme === 'dark' ? '#3A3A3A' : '#E5E5E5' }}>
                 {filteredUploads.map((upload) => (
                   <tr
                     key={upload.id}
                     className="transition-all"
                     style={{
-                      background: theme === 'dark' ? '#1E293B' : 'transparent',
+                      background: theme === 'dark' ? '#2A2A2A' : 'transparent',
                     }}
                   >
                     <td className="py-4 px-6">
@@ -420,16 +420,16 @@ export function DashboardPage() {
                         <div
                           className="w-9 h-9 border rounded-xl flex items-center justify-center transition-all"
                           style={{
-                            background: theme === 'dark' ? '#0F172A' : '#F8FAFC',
-                            borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
-                            color: theme === 'dark' ? '#94A3B8' : '#64748B',
+                            background: theme === 'dark' ? '#1C1C1C' : '#F5F5F5',
+                            borderColor: theme === 'dark' ? '#3A3A3A' : '#E5E5E5',
+                            color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E',
                           }}
                         >
                           <FileText size={16} />
                         </div>
                         <span
                           className="font-medium text-sm truncate max-w-[200px] transition-colors"
-                          style={{ color: theme === 'dark' ? '#F1F5F9' : '#0F172A' }}
+                          style={{ color: theme === 'dark' ? '#E5E5E5' : '#1C1C1C' }}
                         >
                           {upload.patient}
                         </span>
@@ -437,7 +437,7 @@ export function DashboardPage() {
                     </td>
                     <td
                       className="py-4 px-6 text-xs font-medium transition-colors"
-                      style={{ color: theme === 'dark' ? '#64748B' : '#94A3B8' }}
+                      style={{ color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E' }}
                     >
                       {upload.date}
                     </td>
@@ -456,9 +456,9 @@ export function DashboardPage() {
                           size="sm"
                           className="rounded-lg h-8 text-xs transition-all font-medium cursor-pointer"
                           style={{
-                            background: theme === 'dark' ? '#10B981' : '#FFFFFF',
-                            borderColor: theme === 'dark' ? '#10B981' : '#065F46',
-                            color: theme === 'dark' ? '#FFFFFF' : '#065F46',
+                            background: theme === 'dark' ? '#008060' : '#FFFFFF',
+                            borderColor: theme === 'dark' ? '#008060' : '#0A2540',
+                            color: theme === 'dark' ? '#FFFFFF' : '#0A2540',
                           }}
                           onClick={() => navigate(`/result/${upload.id}`)}
                         >
@@ -482,21 +482,21 @@ export function DashboardPage() {
           </div>
 
           {/* Mobile Display Blocks */}
-          <div className="md:hidden divide-y" style={{ borderColor: theme === 'dark' ? '#334155' : '#F1F5F9' }}>
+          <div className="md:hidden divide-y" style={{ borderColor: theme === 'dark' ? '#3A3A3A' : '#E5E5E5' }}>
             {filteredUploads.map((upload) => (
               <div
                 key={upload.id}
                 className="p-4 flex flex-col gap-3 transition-all"
-                style={{ background: theme === 'dark' ? '#1E293B' : '#FFFFFF' }}
+                style={{ background: theme === 'dark' ? '#2A2A2A' : '#FFFFFF' }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div
                       className="w-9 h-9 border rounded-xl flex items-center justify-center transition-all"
                       style={{
-                        background: theme === 'dark' ? '#0F172A' : '#F8FAFC',
-                        borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
-                        color: theme === 'dark' ? '#94A3B8' : '#64748B',
+                        background: theme === 'dark' ? '#1C1C1C' : '#F5F5F5',
+                        borderColor: theme === 'dark' ? '#3A3A3A' : '#E5E5E5',
+                        color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E',
                       }}
                     >
                       <FileText size={16} />
@@ -504,7 +504,7 @@ export function DashboardPage() {
                     <div>
                       <p
                         className="font-semibold text-sm truncate max-w-[180px] transition-colors"
-                        style={{ color: theme === 'dark' ? '#F1F5F9' : '#0F172A' }}
+                        style={{ color: theme === 'dark' ? '#E5E5E5' : '#1C1C1C' }}
                       >
                         {upload.patient}
                       </p>
@@ -519,11 +519,11 @@ export function DashboardPage() {
                 </div>
                 <div
                   className="flex items-center justify-between mt-1 pt-2 border-t transition-colors"
-                  style={{ borderColor: theme === 'dark' ? '#334155' : '#F8FAFC' }}
+                  style={{ borderColor: theme === 'dark' ? '#3A3A3A' : '#F5F5F5' }}
                 >
                   <span
                     className="text-xs font-medium transition-colors"
-                    style={{ color: theme === 'dark' ? '#64748B' : '#94A3B8' }}
+                    style={{ color: theme === 'dark' ? '#7E7E7E' : '#7E7E7E' }}
                   >
                     {upload.date}
                   </span>
@@ -533,9 +533,9 @@ export function DashboardPage() {
                       size="sm"
                       className="h-8 rounded-lg text-xs transition-all font-medium cursor-pointer"
                       style={{
-                        background: theme === 'dark' ? '#10B981' : '#FFFFFF',
-                        borderColor: theme === 'dark' ? '#10B981' : '#065F46',
-                        color: theme === 'dark' ? '#FFFFFF' : '#065F46',
+                        background: theme === 'dark' ? '#008060' : '#FFFFFF',
+                        borderColor: theme === 'dark' ? '#008060' : '#0A2540',
+                        color: theme === 'dark' ? '#FFFFFF' : '#0A2540',
                       }}
                       onClick={() => navigate(`/result/${upload.id}`)}
                     >
@@ -576,15 +576,15 @@ export function DashboardPage() {
             <div 
               className="relative w-full max-w-xl rounded-3xl border p-6 md:p-8 overflow-hidden shadow-2xl z-10 transition-all duration-300 transform scale-100"
               style={{
-                background: theme === 'dark' ? '#1E293B' : '#FFFFFF',
-                borderColor: theme === 'dark' ? '#334155' : 'rgba(226, 232, 240, 0.8)',
+                background: theme === 'dark' ? '#2A2A2A' : '#FFFFFF',
+                borderColor: theme === 'dark' ? '#3A3A3A' : '#E5E5E5',
               }}
             >
               {/* Header */}
               <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
                 <h3 
                   className="text-lg font-bold"
-                  style={{ color: theme === 'dark' ? '#F1F5F9' : '#0F172A' }}
+                  style={{ color: theme === 'dark' ? '#E5E5E5' : '#1C1C1C' }}
                 >
                   Upload documents
                 </h3>
@@ -617,8 +617,8 @@ export function DashboardPage() {
                     <div 
                       className="w-16 h-16 rounded-full flex items-center justify-center mb-5 transition-transform duration-300"
                       style={{
-                        background: theme === 'dark' ? '#0F172A' : '#F8FAFC',
-                        color: isDragging ? '#10B981' : (theme === 'dark' ? '#94A3B8' : '#64748B'),
+                        background: theme === 'dark' ? '#1C1C1C' : '#F5F5F5',
+                        color: isDragging ? '#10B981' : (theme === 'dark' ? '#7E7E7E' : '#7E7E7E'),
                         transform: isDragging ? 'scale(1.1) translateY(-4px)' : 'none'
                       }}
                     >
@@ -627,7 +627,7 @@ export function DashboardPage() {
 
                     <p 
                       className="text-sm font-semibold mb-2"
-                      style={{ color: theme === 'dark' ? '#E2E8F0' : '#1E293B' }}
+                      style={{ color: theme === 'dark' ? '#E5E5E5' : '#2A2A2A' }}
                     >
                       Drag and drop files to upload
                     </p>
@@ -648,9 +648,9 @@ export function DashboardPage() {
                     
                     <Button
                       onClick={() => fileInputRef.current?.click()}
-                      className="h-10 px-6 rounded-xl text-white text-xs font-semibold tracking-wider uppercase transition-all shadow-sm"
+                      className="h-10 px-6 rounded-xl text-white text-xs font-semibold tracking-wider uppercase transition-all shadow-sm cursor-pointer"
                       style={{
-                        background: theme === 'dark' ? '#10B981' : '#065F46',
+                        background: '#008060',
                       }}
                     >
                       Select Files
@@ -667,7 +667,7 @@ export function DashboardPage() {
                     
                     <span 
                       className="text-sm font-semibold truncate max-w-xs mb-1"
-                      style={{ color: theme === 'dark' ? '#F1F5F9' : '#0F172A' }}
+                      style={{ color: theme === 'dark' ? '#E5E5E5' : '#1C1C1C' }}
                     >
                       {uploadingFile.name}
                     </span>
