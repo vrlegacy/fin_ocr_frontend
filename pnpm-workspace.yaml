@@ -1,2 +1,8 @@
 packages:
   - '.'
+allowBuilds:
+  '@tailwindcss/oxide': true
+  browser-tabs-lock: true
+  esbuild: true
+overrides:
+  vite: "6.3.5"

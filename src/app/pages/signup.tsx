@@ -1,169 +1,221 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Check } from 'lucide-react';
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { ArrowRight, Check, Eye, EyeOff } from "lucide-react";
+import { useTheme } from "../context/ThemeContext";
+import { toast } from "sonner";
+import { useAuth } from "../context/AuthContext";
 
 export function SignupPage() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('');
+  const { theme } = useTheme();
+  const { loginWithEmailPassword } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/dashboard');
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      await loginWithEmailPassword(email, password);
+      toast.success("Account created and logged in successfully!");
+      navigate("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Failed to create account");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#F5F5F5]">
-      <div 
-        className="w-full max-w-[1000px] min-h-[680px] bg-white flex flex-col md:flex-row overflow-hidden" 
-        style={{ borderRadius: '24px', boxShadow: '0 10px 40px rgba(0, 0, 0, 0.06)', border: '1px solid rgba(226, 232, 240, 0.8)' }}
-      >
-        {/* Left Panel - Emerald branding background */}
-        <div className="w-full md:w-1/2 flex items-center justify-center py-12 md:py-0" style={{ background: '#008060' }}>
-          <div className="px-12 text-center">
-            {/* White Logo Box */}
-            <div 
-              className="w-16 h-16 mx-auto mb-8 flex items-center justify-center font-bold text-2xl border border-white/10 shadow-sm" 
-              style={{ background: 'white', color: '#008060', borderRadius: '16px' }}
+    <div className="min-h-screen bg-[#F5F5F7] dark:bg-[#090A0F] text-foreground flex items-center justify-center px-6 py-4 relative overflow-y-auto transition-colors duration-300">
+      {/* Background Glows */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div
+          className="h-96 w-96 rounded-full blur-[140px] opacity-40 dark:opacity-20"
+          style={{
+            background: "radial-gradient(circle, #10B981 0%, transparent 70%)",
+            position: "absolute",
+            top: "-150px",
+            left: "-100px",
+          }}
+        />
+        <div
+          className="h-96 w-96 rounded-full blur-[140px] opacity-30 dark:opacity-10"
+          style={{
+            background: "radial-gradient(circle, #3B82F6 0%, transparent 70%)",
+            position: "absolute",
+            bottom: "-150px",
+            right: "-100px",
+          }}
+        />
+      </div>
+
+      <div className="w-full max-w-md relative z-10 py-1">
+        {/* Logo */}
+        <div className="text-center mb-6 flex flex-col items-center gap-3">
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-[#10B981] to-[#059669] shadow-lg border border-emerald-400/20"
+          >
+            <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 22V4c0-.5.2-1 .6-1.4C5 2.2 5.5 2 6 2h12c.5 0 1 .2 1.4.6.4.4.6.9.6 1.4v4c0 .5-.2 1-.6 1.4-.4.4-.9.6-1.4.6H6" />
+              <path d="M18 14H6" />
+            </svg>
+          </div>
+
+          <div>
+            <h1
+              className="text-2xl font-black tracking-tight text-slate-800 dark:text-slate-100"
+              style={{ letterSpacing: "-0.8px" }}
             >
-              N
-            </div>
-
-            {/* Title */}
-            <h1 className="mb-4" style={{ fontSize: '48px', fontWeight: '700', color: 'white', lineHeight: '1.2' }}>
-              Neuberg
+              Finch
             </h1>
-
-            {/* Subtitle */}
-            <p className="mb-12 text-white/90" style={{ fontSize: '16px', lineHeight: '1.5' }}>
-              Upload medical forms and extract data instantly with AI
+            <p className="text-slate-400 dark:text-slate-500 text-xs font-medium mt-0.5">
+              AI-Powered Personal Wealth & Expense Engine
             </p>
-
-            {/* Feature List */}
-            <div className="text-left space-y-4 max-w-sm mx-auto">
-              {[
-                'Upload PDF or image forms',
-                'AI extracts all fields',
-                'Copy any field instantly',
-                'View past uploads anytime'
-              ].map((feature, index) => (
-                <div key={index} className="flex items-center gap-3 text-white/90">
-                  <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: '#008060' }}>
-                    <Check size={12} className="text-white" />
-                  </div>
-                  <span style={{ fontSize: '15px', fontWeight: '500' }}>{feature}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
 
-        {/* Right Panel - Inputs Form */}
-        <div className="w-full md:w-1/2 flex items-center justify-center px-6 md:px-16 py-12 md:py-0">
-          <div className="w-full max-w-md">
-            {/* Badge */}
-            <div className="inline-block px-4 py-1.5 mb-6 rounded-full text-xs font-semibold" style={{ background: '#E6F2EF', color: '#008060' }}>
-              Create account
+        {/* Signup Card */}
+        <div
+          className="glass-panel rounded-3xl p-6 md:p-8 border"
+          style={{
+            borderColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(15, 23, 42, 0.08)",
+          }}
+        >
+          <h2
+            className="text-lg font-bold mb-1 text-slate-800 dark:text-slate-100"
+          >
+            Create Account
+          </h2>
+
+          <p className="text-slate-400 dark:text-slate-500 text-xs mb-6">
+            Join 1,000+ users tracking expenses effortlessly with Finch AI.
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                Username
+              </label>
+              <input
+                type="text"
+                placeholder="Choose a username"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setError(null);
+                }}
+                className="w-full h-11 px-3.5 rounded-xl border outline-none text-sm font-semibold transition-all duration-150 glass-input focus:border-[#10B981]"
+                required
+              />
             </div>
 
-            {/* Heading */}
-            <h2 className="mb-2" style={{ fontSize: '42px', fontWeight: '700', color: '#12133A', lineHeight: '1.1' }}>
-              Get started
-            </h2>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                Email
+              </label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError(null);
+                }}
+                className="w-full h-11 px-3.5 rounded-xl border outline-none text-sm font-semibold transition-all duration-150 glass-input focus:border-[#10B981]"
+                required
+              />
+            </div>
 
-            {/* Subheading */}
-            <p className="mb-8 text-gray-500 text-sm" style={{ fontSize: '14px' }}>
-              Create your account to start extracting data
-            </p>
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Input
-                  type="text"
-                  placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="h-13 rounded-xl border-gray-200 focus-visible:ring-[#008060] focus-visible:border-[#008060]"
-                  style={{ background: 'white', border: '1px solid #E5E7EB' }}
-                  required
-                />
-              </div>
-
-              <div>
-                <Input
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-13 rounded-xl border-gray-200 focus-visible:ring-[#008060] focus-visible:border-[#008060]"
-                  style={{ background: 'white', border: '1px solid #E5E7EB' }}
-                  required
-                />
-              </div>
-
-              {/* Role Select Dropdown */}
-              <div>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full h-13 px-3 rounded-xl border border-gray-200 outline-none focus:border-[#008060] focus:ring-1 focus:ring-[#008060] transition-colors text-gray-500 bg-white"
-                  style={{ fontSize: "14px", fontWeight: "500" }}
-                  required
-                >
-                  <option value="" disabled>Select your role</option>
-                  <option value="Doctor">Doctor / Physician</option>
-                  <option value="Lab Technician">Lab Technician</option>
-                  <option value="Administrator">Administrator</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-
-              <div>
-                <Input
-                  type="password"
-                  placeholder="Create a password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-13 rounded-xl border-gray-200 focus-visible:ring-[#008060] focus-visible:border-[#008060]"
-                  style={{ background: 'white', border: '1px solid #E5E7EB' }}
-                  required
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full h-13 rounded-xl text-white font-semibold transition-opacity hover:opacity-95 cursor-pointer"
-                style={{ background: '#008060' }}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                Financial Persona
+              </label>
+              <select
+                value={role}
+                onChange={(e) => {
+                  setRole(e.target.value);
+                  setError(null);
+                }}
+                className="w-full h-11 px-3.5 rounded-xl border outline-none text-sm font-semibold transition-all duration-150 glass-input focus:border-[#10B981] bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300"
+                required
               >
-                Create account
-              </Button>
+                <option value="" disabled>Select your usage role</option>
+                <option value="Personal">Personal / Individual User</option>
+                <option value="Business">Business Owner / SME</option>
+                <option value="Advisor">Financial Advisor / Accountant</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
 
-              <div className="flex items-center gap-4 my-6">
-                <div className="flex-1 h-px bg-gray-150"></div>
-                <span className="text-xs text-gray-400">or</span>
-                <div className="flex-1 h-px bg-gray-150"></div>
-              </div>
-
-              <div className="text-center text-sm text-gray-500 font-medium">
-                Already have an account?{' '}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                Password
+              </label>
+              <div className="relative w-full">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Create a strong password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError(null);
+                  }}
+                  className="w-full h-11 pl-3.5 pr-10 rounded-xl border outline-none text-sm font-semibold transition-all duration-150 glass-input focus:border-[#10B981]"
+                  required
+                />
                 <button
                   type="button"
-                  onClick={() => navigate('/')}
-                  className="font-semibold hover:underline bg-none border-none cursor-pointer"
-                  style={{ color: '#008060' }}
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none cursor-pointer"
                 >
-                  Sign in
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
-            </form>
+            </div>
+
+            {error && (
+              <div className="p-3.5 text-xs rounded-xl border text-red-600 dark:text-red-400 bg-red-500/10 border-red-500/20 font-semibold animate-in fade-in slide-in-from-top-1 duration-200">
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full h-11 rounded-xl text-xs font-bold uppercase tracking-wider text-white bg-[#10B981] hover:bg-[#059669] transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-1.5 shadow-md active:scale-95 duration-100 border-0 mt-2"
+            >
+              {isSubmitting ? "Creating Account..." : "Create Account"}
+            </button>
+          </form>
+
+          {/* Social Divider */}
+          <div className="flex items-center gap-4 my-4">
+            <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800"></div>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">or</span>
+            <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800"></div>
+          </div>
+
+          <div className="text-center text-slate-500 dark:text-slate-400 text-xs font-semibold">
+            Already have an account?{" "}
+            <button
+              onClick={() => navigate("/")}
+              className="font-bold text-[#10B981] hover:underline cursor-pointer bg-transparent border-0 p-0"
+            >
+              Sign In
+            </button>
           </div>
         </div>
       </div>
     </div>
   );
 }
+

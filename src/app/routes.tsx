@@ -7,11 +7,13 @@ import { ResultPage } from "./pages/result";
 import { HistoryPage } from "./pages/history";
 import { SettingsPage } from "./pages/settings";
 import { OcrEntryPage } from "./pages/ocr-entry";
+import { ErrorFallback } from "./components/ErrorFallback";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     Component: Layout,
+    errorElement: <ErrorFallback />,
     children: [
       {
         path: "/",
