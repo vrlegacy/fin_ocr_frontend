@@ -27,6 +27,8 @@ interface AuthContextType {
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const apiUrl = (import.meta.env as any).VITE_API_URL || "https://finocr.onrender.com";
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const auth0 = useAuth0();
 
@@ -81,7 +83,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       try {
-        const apiUrl =  "http://127.0.0.1:8000";
         const response = await fetch(`${apiUrl}/api/me`, {
           headers: {
             Authorization: `Bearer ${localToken}`,
@@ -106,8 +107,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [localToken]);
 
   const loginWithEmailPassword = async (email: string, password: string) => {
-    const apiUrl = 
-     "http://127.0.0.1:8000";
     const response = await fetch(`${apiUrl}/auth/login`, {
       method: "POST",
       headers: {
@@ -169,7 +168,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const resetPassword = async (email: string, newPassword: string) => {
-    const apiUrl =  "http://127.0.0.1:8000";
     const response = await fetch(`${apiUrl}/auth/reset-password`, {
       method: "POST",
       headers: {

@@ -17,53 +17,7 @@ import {
   Save,
 } from "lucide-react";
 
-const demoRecords: Record<string, any> = {
-  "1": {
-    merchantName: "Amazon Marketplace",
-    transactionDate: "29 May 2026",
-    invoiceNumber: "INV-2026-9081",
-    category: "Electronics",
-    paymentMethod: "Credit Card",
-    taxId: "US-8876543-2",
-    notes: "Office setup gear and accessories",
-    itemsList: "1x Laptop Stand (₹29.99)\n1x USB-C Hub (₹90.00)\n1x HDMI Cable (₹30.00)",
-    subtotal: "₹149.99",
-    taxAmount: "₹0.00",
-    totalAmount: "₹149.99",
-    discount: "₹0.00",
-    cardEnding: "Visa *4321",
-  },
-  "2": {
-    merchantName: "Uber Technologies",
-    transactionDate: "28 May 2026",
-    invoiceNumber: "INV-2026-7842",
-    category: "Transport",
-    paymentMethod: "Apple Pay",
-    taxId: "US-2234123-5",
-    notes: "Airport commute for client conference",
-    itemsList: "1x UberX Ride (₹24.50)",
-    subtotal: "₹24.50",
-    taxAmount: "₹0.00",
-    totalAmount: "₹24.50",
-    discount: "₹0.00",
-    cardEnding: "Mastercard *8899",
-  },
-  "3": {
-    merchantName: "Walmart Stores",
-    transactionDate: "27 May 2026",
-    invoiceNumber: "INV-2026-8231",
-    category: "Groceries",
-    paymentMethod: "Cash",
-    taxId: "US-9988112-9",
-    notes: "Kitchen supply restocking",
-    itemsList: "1x Organic Bananas (₹4.50)\n3x Fresh Milk (₹12.00)\n2x Whole Grain Bread (₹8.00)\n1x Detergent (₹20.00)\n1x Olive Oil (₹40.70)",
-    subtotal: "₹85.20",
-    taxAmount: "₹0.00",
-    totalAmount: "₹85.20",
-    discount: "₹0.00",
-    cardEnding: "None (Cash)",
-  }
-};
+
 
 const fieldSections = [
   {
@@ -92,6 +46,8 @@ const fieldSections = [
     ],
   },
 ] as const;
+
+const apiUrl = (import.meta.env as any).VITE_API_URL || "https://finocr.onrender.com";
 
 export function ResultPage() {
   const navigate = useNavigate();
@@ -133,7 +89,7 @@ export function ResultPage() {
     const fetchRecord = async () => {
       if (!token || !id) return;
       try {
-        const res = await fetch(`http://127.0.0.1:8000/api/expenses/${id}`, {
+        const res = await fetch(`${apiUrl}/api/expenses/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
@@ -207,7 +163,7 @@ export function ResultPage() {
 
   const handleDeleteRecord = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/expenses/${id}`, {
+      const res = await fetch(`${apiUrl}/api/expenses/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -266,7 +222,7 @@ export function ResultPage() {
   const handleSaveToDatabase = async () => {
     toast.promise(
       (async () => {
-        const res = await fetch(`http://127.0.0.1:8000/api/expenses/${id}`, {
+        const res = await fetch(`${apiUrl}/api/expenses/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

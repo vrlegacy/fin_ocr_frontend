@@ -24,50 +24,8 @@ interface HistoryRecord {
   status: "Verified" | "Needs Review";
 }
 
-const demoRecords: HistoryRecord[] = [
-  {
-    id: 1,
-    merchantName: "Amazon Marketplace",
-    invoiceNumber: "INV-2026-9081",
-    category: "Electronics",
-    paymentMethod: "Credit Card",
-    itemsList: "Laptop Stand, USB-C Hub, HDMI Cable",
-    subtotal: "₹149.99",
-    taxAmount: "₹0.00",
-    totalAmount: "₹149.99",
-    enteredBy: "Darshan",
-    uploadedAt: "29 May 2026",
-    status: "Verified",
-  },
-  {
-    id: 2,
-    merchantName: "Uber Technologies",
-    invoiceNumber: "INV-2026-7842",
-    category: "Transport",
-    paymentMethod: "Apple Pay",
-    itemsList: "UberX Ride",
-    subtotal: "₹24.50",
-    taxAmount: "₹0.00",
-    totalAmount: "₹24.50",
-    enteredBy: "Darshan",
-    uploadedAt: "28 May 2026",
-    status: "Verified",
-  },
-  {
-    id: 3,
-    merchantName: "Walmart Stores",
-    invoiceNumber: "INV-2026-8231",
-    category: "Groceries",
-    paymentMethod: "Cash",
-    itemsList: "Groceries & Household Supplies",
-    subtotal: "₹85.20",
-    taxAmount: "₹0.00",
-    totalAmount: "₹85.20",
-    enteredBy: "Darshan",
-    uploadedAt: "27 May 2026",
-    status: "Verified",
-  },
-];
+
+const apiUrl = (import.meta.env as any).VITE_API_URL || "https://finocr.onrender.com";
 
 export function HistoryPage() {
   const navigate = useNavigate();
@@ -90,7 +48,7 @@ export function HistoryPage() {
     const fetchHistory = async () => {
       if (!token) return;
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/expenses", {
+        const res = await fetch(`${apiUrl}/api/expenses`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
@@ -134,7 +92,7 @@ export function HistoryPage() {
 
   const handleDeleteRecord = async (id: number, merchantName: string) => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/expenses/${id}`, {
+      const res = await fetch(`${apiUrl}/api/expenses/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });

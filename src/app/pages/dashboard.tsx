@@ -27,69 +27,6 @@ import {
   ChevronLeft,
 } from "lucide-react";
 
-const mockRecordsData: Record<string, any> = {
-  "1": {
-    merchantName: "Amazon Marketplace",
-    transactionDate: "Today",
-    invoiceNumber: "INV-2026-9081",
-    category: "Electronics",
-    paymentMethod: "Credit Card",
-    taxId: "US-8876543-2",
-    notes: "Office setup gear and accessories",
-    itemsList: "1x Laptop Stand (₹299.00)\n1x USB-C Hub (₹900.00)\n1x HDMI Cable (₹300.00)",
-    subtotal: "₹1,499.00",
-    taxAmount: "₹0.00",
-    totalAmount: "₹1,499.00",
-    discount: "₹0.00",
-    cardEnding: "Visa *4321",
-  },
-  "2": {
-    merchantName: "Uber Technologies",
-    transactionDate: "Today",
-    invoiceNumber: "INV-2026-7842",
-    category: "Transport",
-    paymentMethod: "Apple Pay",
-    taxId: "US-2234123-5",
-    notes: "Airport commute for client conference",
-    itemsList: "1x UberX Ride (₹220.00)",
-    subtotal: "₹220.00",
-    taxAmount: "₹0.00",
-    totalAmount: "₹220.00",
-    discount: "₹0.00",
-    cardEnding: "Apple Pay",
-  },
-  "3": {
-    merchantName: "Starbucks Coffee",
-    transactionDate: "Today",
-    invoiceNumber: "INV-2026-8822",
-    category: "Food",
-    paymentMethod: "Credit Card",
-    taxId: "IN-991827-0",
-    notes: "Weekly team check-in coffee",
-    itemsList: "1x Caramel Macchiato (₹280.00)\n1x Chocolate Croissant (₹170.00)",
-    subtotal: "₹450.00",
-    taxAmount: "₹0.00",
-    totalAmount: "₹450.00",
-    discount: "₹0.00",
-    cardEnding: "Mastercard *1234",
-  },
-  "4": {
-    merchantName: "Walmart Stores",
-    transactionDate: "27 May 2026",
-    invoiceNumber: "INV-2026-8231",
-    category: "Groceries",
-    paymentMethod: "Cash",
-    taxId: "US-9988112-9",
-    notes: "Kitchen supply restocking",
-    itemsList: "1x Organic Bananas (₹4.50)\n3x Fresh Milk (₹12.00)\n2x Whole Grain Bread (₹8.00)\n1x Detergent (₹20.00)\n1x Olive Oil (₹40.70)",
-    subtotal: "₹85.20",
-    taxAmount: "₹0.00",
-    totalAmount: "₹85.20",
-    discount: "₹0.00",
-    cardEnding: "None (Cash)",
-  }
-};
-
 const fieldSections = [
   {
     title: "Bill & Vendor Details",
@@ -118,11 +55,13 @@ const fieldSections = [
   },
 ] as const;
 
+const apiUrl = (import.meta.env as any).VITE_API_URL || "https://finocr.onrender.com";
+
 export function DashboardPage() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { theme } = useTheme();
-  const { token, isAuthenticated, isLoading } = useAuth();
+  const { token, isAuthenticated, isLoading, user } = useAuth();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -143,11 +82,10 @@ export function DashboardPage() {
 
   // Swipeable AI Insights states
   const [activeInsightIndex, setActiveInsightIndex] = useState(0);
-  const insights = [
-    "You spent 22% less compared to last week",
-    "Swiggy spending has increased for 5 days",
-    "Grocery budget is 80% consumed"
-  ];
+  const [insights, setInsights] = useState<string[]>([]);
+
+  // Dynamic category breakdown state
+  const [categoriesBreakdown, setCategoriesBreakdown] = useState<any[]>([]);
 
   // Core Datastore
   const [recentUploads, setRecentUploads] = useState<any[]>([]);
@@ -163,11 +101,35 @@ export function DashboardPage() {
   const [deletedFields, setDeletedFields] = useState<Record<string, boolean>>({});
   const [correctedFields, setCorrectedFields] = useState<Record<string, boolean>>({});
 
+  const updateAnalysis = async () => {
+    if (!token) return;
+    try {
+      const catRes = await fetch(`${apiUrl}/api/expenses/analysis/categories`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (catRes.ok) {
+        const catData = await catRes.json();
+        setCategoriesBreakdown(catData);
+      }
+      const insRes = await fetch(`${apiUrl}/api/expenses/analysis/insights`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (insRes.ok) {
+        const insData = await insRes.json();
+        if (Array.isArray(insData) && insData.length > 0) {
+          setInsights(insData);
+        }
+      }
+    } catch (err) {
+      console.error("Error updating analysis:", err);
+    }
+  };
+
   useEffect(() => {
     const fetchExpenses = async () => {
       if (!token) return;
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/expenses", {
+        const res = await fetch(`${apiUrl}/api/expenses`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
@@ -207,6 +169,7 @@ export function DashboardPage() {
       }
     };
     fetchExpenses();
+    updateAnalysis();
   }, [token]);
 
   // Helper to collapse menu on outer click
@@ -229,10 +192,11 @@ export function DashboardPage() {
   // Dynamic calculations
   const todayTransactions = recentUploads.filter(t => t.date.toLowerCase() === "today");
   const todaySpentTotal = todayTransactions.reduce((acc, curr) => acc + parseAmountVal(curr.amount), 0);
-  const displaySpentToday = todaySpentTotal > 0 ? todaySpentTotal : 2169;
+  const displaySpentToday = todaySpentTotal;
 
-  const totalMonthlySpend = 18420 + (todaySpentTotal > 0 ? todaySpentTotal - 2169 : 0);
-  const budgetRemaining = Math.max(0, 11200 - (todaySpentTotal > 0 ? todaySpentTotal - 2169 : 0));
+  const totalMonthlySpend = recentUploads.reduce((acc, curr) => acc + parseAmountVal(curr.amount), 0);
+  const budgetTarget = 50000;
+  const budgetRemaining = Math.max(0, budgetTarget - totalMonthlySpend);
 
   const uploadAndScanFile = async (file: File) => {
     setIsUploadMenuOpen(false);
@@ -245,7 +209,7 @@ export function DashboardPage() {
       formData.append("file", file);
 
       setUploadProgress(35);
-      const scanRes = await fetch("http://127.0.0.1:8000/api/ocr/scan", {
+      const scanRes = await fetch(`${apiUrl}/api/ocr/scan`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -262,7 +226,7 @@ export function DashboardPage() {
       setUploadProgress(85);
 
       // Create the expense record in Supabase database
-      const saveRes = await fetch("http://127.0.0.1:8000/api/expenses", {
+      const saveRes = await fetch(`${apiUrl}/api/expenses`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -343,6 +307,7 @@ export function DashboardPage() {
       setEditingFields({});
       setDeletedFields({});
       setCorrectedFields({});
+      updateAnalysis();
 
       toast.success(`"${file.name}" processed successfully!`, { id: "upload-toast" });
     } catch (err: any) {
@@ -364,7 +329,7 @@ export function DashboardPage() {
 
   const handleDeleteUpload = async (id: string, merchant: string) => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/expenses/${id}`, {
+      const res = await fetch(`${apiUrl}/api/expenses/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`
@@ -376,6 +341,7 @@ export function DashboardPage() {
           setSelectedRecord(null);
           setSelectedRecordId(null);
         }
+        updateAnalysis();
         toast.warning(`Deleted transaction card for ${merchant}`);
       } else {
         toast.error("Failed to delete record");
@@ -483,7 +449,7 @@ export function DashboardPage() {
     
     toast.promise(
       (async () => {
-        const res = await fetch(`http://127.0.0.1:8000/api/expenses/${selectedRecordId}`, {
+        const res = await fetch(`${apiUrl}/api/expenses/${selectedRecordId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -522,6 +488,7 @@ export function DashboardPage() {
               : item
           )
         );
+        updateAnalysis();
       })(),
       {
         loading: "Syncing transactions...",
@@ -558,7 +525,7 @@ export function DashboardPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 w-full mb-10 pb-6 border-b border-slate-200/20">
           <div className="text-left">
             <span className="text-xs uppercase tracking-widest text-[#64748B] font-bold">
-              Good Evening, Vr
+              Welcome, {user?.name || "User"}
             </span>
             <h1 className="text-3xl md:text-4xl font-black text-[#0F172A] mt-1 tracking-tight">
               ₹{displaySpentToday.toLocaleString("en-IN")} spent today
@@ -627,38 +594,46 @@ export function DashboardPage() {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between gap-4">
-                  <p className="text-sm font-bold text-[#0F172A] leading-snug animate-in fade-in duration-300">
-                    {insights[activeInsightIndex]}
+                {insights.length > 0 ? (
+                  <>
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="text-sm font-bold text-[#0F172A] leading-snug animate-in fade-in duration-300">
+                        {insights[activeInsightIndex]}
+                      </p>
+
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        <button
+                          onClick={() => setActiveInsightIndex(prev => (prev === 0 ? insights.length - 1 : prev - 1))}
+                          className="w-6 h-6 rounded-full flex items-center justify-center bg-white/65 hover:bg-white text-slate-600 border border-slate-200/40 cursor-pointer transition-all"
+                        >
+                          <ChevronLeft size={12} />
+                        </button>
+                        <button
+                          onClick={() => setActiveInsightIndex(prev => (prev === insights.length - 1 ? 0 : prev + 1))}
+                          className="w-6 h-6 rounded-full flex items-center justify-center bg-white/65 hover:bg-white text-slate-600 border border-slate-200/40 cursor-pointer transition-all"
+                        >
+                          <ChevronRight size={12} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-center gap-1.5 mt-2">
+                      {insights.map((_, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => setActiveInsightIndex(idx)}
+                          className={`w-1.5 h-1.5 rounded-full cursor-pointer transition-all ${
+                            idx === activeInsightIndex ? "bg-[#6366F1] w-3" : "bg-[#64748B]/30"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-xs font-semibold text-[#64748B] leading-snug py-2">
+                    No insights available yet. Upload more receipts to generate automated AI insights.
                   </p>
-
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <button
-                      onClick={() => setActiveInsightIndex(prev => (prev === 0 ? insights.length - 1 : prev - 1))}
-                      className="w-6 h-6 rounded-full flex items-center justify-center bg-white/65 hover:bg-white text-slate-600 border border-slate-200/40 cursor-pointer transition-all"
-                    >
-                      <ChevronLeft size={12} />
-                    </button>
-                    <button
-                      onClick={() => setActiveInsightIndex(prev => (prev === insights.length - 1 ? 0 : prev + 1))}
-                      className="w-6 h-6 rounded-full flex items-center justify-center bg-white/65 hover:bg-white text-slate-600 border border-slate-200/40 cursor-pointer transition-all"
-                    >
-                      <ChevronRight size={12} />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex justify-center gap-1.5 mt-2">
-                  {insights.map((_, idx) => (
-                    <div
-                      key={idx}
-                      onClick={() => setActiveInsightIndex(idx)}
-                      className={`w-1.5 h-1.5 rounded-full cursor-pointer transition-all ${
-                        idx === activeInsightIndex ? "bg-[#6366F1] w-3" : "bg-[#64748B]/30"
-                      }`}
-                    />
-                  ))}
-                </div>
+                )}
 
                 <div className="flex justify-end mt-2 pt-2 border-t border-slate-200/10">
                   <button
@@ -672,29 +647,29 @@ export function DashboardPage() {
               </div>
             </div>
 
-            {/* Static breakdown list for widescreen visibility */}
+            {/* Dynamic breakdown list for widescreen visibility */}
             <div className="hidden lg:block">
               <h2 className="text-xs font-black uppercase tracking-widest text-[#64748B] mb-3">
                 Monthly Breakdown List
               </h2>
               <div className="glass-panel rounded-3xl p-5 border bg-white/40 space-y-3">
-                {[
-                  { name: "Food", amount: "₹6,200", percent: 34, color: "bg-emerald-500" },
-                  { name: "Shopping", amount: "₹3,500", percent: 19, color: "bg-blue-500" },
-                  { name: "Travel", amount: "₹2,100", percent: 11, color: "bg-indigo-500" },
-                  { name: "Bills", amount: "₹4,000", percent: 22, color: "bg-amber-500" },
-                  { name: "Others", amount: "₹2,620", percent: 14, color: "bg-slate-400" },
-                ].map((item) => (
-                  <div key={item.name} className="space-y-1.5">
-                    <div className="flex justify-between items-center text-xs font-bold text-[#0F172A]">
-                      <span>{item.name}</span>
-                      <span>{item.amount} ({item.percent}%)</span>
+                {categoriesBreakdown.length > 0 ? (
+                  categoriesBreakdown.map((item) => (
+                    <div key={item.name} className="space-y-1.5">
+                      <div className="flex justify-between items-center text-xs font-bold text-[#0F172A]">
+                        <span>{item.name}</span>
+                        <span>{item.amount} ({item.percent}%)</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-slate-200/50 rounded-full overflow-hidden">
+                        <div className={`h-full ${item.color}`} style={{ width: `${item.percent}%` }} />
+                      </div>
                     </div>
-                    <div className="h-1.5 w-full bg-slate-200/50 rounded-full overflow-hidden">
-                      <div className={`h-full ${item.color}`} style={{ width: `${item.percent}%` }} />
-                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">No expenses logged yet</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
 

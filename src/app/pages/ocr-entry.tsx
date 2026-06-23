@@ -24,6 +24,8 @@ import {
   Pencil,
 } from "lucide-react";
 
+const apiUrl = (import.meta.env as any).VITE_API_URL || "https://finocr.onrender.com";
+
 export function OcrEntryPage() {
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -80,7 +82,7 @@ export function OcrEntryPage() {
       formData.append("file", file);
 
       setUploadProgress(40);
-      const res = await fetch("http://127.0.0.1:8000/api/ocr/scan", {
+      const res = await fetch(`${apiUrl}/api/ocr/scan`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -189,7 +191,7 @@ export function OcrEntryPage() {
         }
       }
 
-      const res = await fetch("http://127.0.0.1:8000/api/expenses", {
+      const res = await fetch(`${apiUrl}/api/expenses`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

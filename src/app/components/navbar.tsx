@@ -64,7 +64,7 @@ export function Navbar({ className = "" }: NavbarProps) {
   }, []);
 
   const currentPath = location.pathname;
-  const isIslandOpened = isHovered || !isScrolledDown;
+  const isIslandOpened = isHovered || !isScrolledDown || isExpanded;
 
   return (
     <div 
@@ -75,7 +75,6 @@ export function Navbar({ className = "" }: NavbarProps) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
-          setIsExpanded(false);
         }}
         className="dynamic-island-container text-white flex flex-col items-center overflow-hidden"
         style={{
@@ -157,7 +156,7 @@ export function Navbar({ className = "" }: NavbarProps) {
 
         {/* Bottom Section: Expandable Menu Options (Visible when expanded) */}
         <div 
-          className="w-full flex flex-col gap-1 px-3 mt-1.5 border-t border-white/5 pt-2.5 transition-all duration-300 ease-in-out"
+          className="w-48 ml-auto flex flex-col gap-1 px-3 mt-1.5 border-t border-white/5 pt-2.5 transition-all duration-300 ease-in-out"
           style={{
             opacity: isExpanded ? 1 : 0,
             pointerEvents: isExpanded ? "auto" : "none",
@@ -172,7 +171,7 @@ export function Navbar({ className = "" }: NavbarProps) {
             className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-colors w-full cursor-pointer hover:bg-white/10 duration-150 text-slate-300 hover:text-white"
           >
             {theme === 'dark' ? <Sun size={13} className="text-amber-400" /> : <Moon size={13} className="text-emerald-400" />}
-            <span className="text-[10px] font-bold uppercase tracking-wider">Toggle Theme</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider">Theme</span>
           </button>
 
           {/* Settings Option */}

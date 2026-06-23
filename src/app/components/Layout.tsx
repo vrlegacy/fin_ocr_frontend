@@ -15,7 +15,7 @@ export function Layout() {
         clientId={clientId}
         authorizationParams={{
           redirect_uri: window.location.origin,
-          audience: import.meta.env.VITE_API_URL || "http://127.0.0.1:8000",
+          audience: import.meta.env.VITE_API_URL || "https://finocr.onrender.com",
         }}
       >
         <AuthProvider>
