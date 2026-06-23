@@ -8,7 +8,7 @@ import { useAuth } from "../context/AuthContext";
 export function SignupPage() {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { loginWithEmailPassword } = useAuth();
+  const { signup } = useAuth();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -24,7 +24,7 @@ export function SignupPage() {
     setError(null);
 
     try {
-      await loginWithEmailPassword(email, password);
+      await signup(username, email, role, password);
       toast.success("Account created and logged in successfully!");
       navigate("/dashboard");
     } catch (err: any) {

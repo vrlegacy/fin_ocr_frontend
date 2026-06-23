@@ -2,6 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Navbar } from "../components/navbar";
 import { Button } from "../components/ui/button";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
 import { Badge } from "../components/ui/badge";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
@@ -84,6 +92,14 @@ export function ResultPage() {
   const [copiedFields, setCopiedFields] = useState<Record<string, boolean>>({});
   const [deletedFields, setDeletedFields] = useState<Record<string, boolean>>({});
   const [correctedFields, setCorrectedFields] = useState<Record<string, boolean>>({});
+
+  const handleBackNavigation = (targetPath: string) => {
+    if (isEditing || Object.values(editingFields).some(Boolean)) {
+      toast.warning("Finish editing before leaving.");
+    } else {
+      navigate(targetPath);
+    }
+  };
 
   useEffect(() => {
     const fetchRecord = async () => {
@@ -261,22 +277,25 @@ export function ResultPage() {
       <Navbar />
 
       <div className="flex-1 px-4 pb-6 md:p-8 pt-24 md:pt-28 min-w-0 max-w-7xl mx-auto w-full">
-        <div className="mb-6">
-          <Button
-            onClick={() => {
-              if (isEditing || Object.values(editingFields).some(Boolean)) {
-                toast.warning("Finish editing before leaving.");
-              } else {
-                navigate("/history");
-              }
-            }}
-            variant="ghost"
-            className="px-0 text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-transparent transition-colors cursor-pointer"
-          >
-            <ArrowLeft size={16} className="mr-2" />
-            Back to Expense History
-          </Button>
-        </div>
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink onClick={() => handleBackNavigation("/dashboard")} className="cursor-pointer">
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink onClick={() => handleBackNavigation("/history")} className="cursor-pointer">
+                Logs
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Expense Details</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
         <div
           className="rounded-3xl p-6 md:p-8 border mb-6 transition-all duration-300 glass-panel"

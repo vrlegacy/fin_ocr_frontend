@@ -26,6 +26,7 @@ interface AuthContextType {
   logout: () => void;
   token: string | null;
   updateProfile: (username: string, role: string) => Promise<void>;
+  signup: (username: string, email: string, role: string, password: string) => Promise<void>;
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -66,17 +67,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const getAuth0Token = async () => {
-      if (auth0.isAuthenticated) {
+      if (auth0.isAuthenticated && auth0.user) {
         try {
           const token = await auth0.getAccessTokenSilently();
-          setLocalAuth(token, localUser);
+          
+          // Verify with local backend if user is registered
+          const response = await fetch(`${apiUrl}/api/me`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          
+          if (response.ok) {
+            const dbUser = await response.json();
+            setLocalAuth(token, dbUser);
+            // Immediately redirect to dashboard on successful Google Login
+            window.location.href = "/dashboard";
+          } else {
+            // Not registered or other backend issue - force logout from Auth0
+            toast.error("You are not registered in the system. Please register first.");
+            setLocalAuth(null, null);
+            auth0.logout({
+              logoutParams: {
+                returnTo: window.location.origin,
+              },
+            });
+          }
         } catch (error) {
           console.error("Error getting Auth0 token:", error);
         }
       }
     };
     getAuth0Token();
-  }, [auth0.isAuthenticated]);
+  }, [auth0.isAuthenticated, auth0.user]);
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -201,6 +224,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const signup = async (username: string, email: string, role: string, password: string) => {
+    const response = await fetch(`${apiUrl}/auth/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, email, role, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.detail || "Failed to create account");
+    }
+
+    setLocalAuth(data.access_token, data.user);
+  };
+
   const updateProfile = async (username: string, role: string) => {
     if (!localToken) return;
     const response = await fetch(`${apiUrl}/api/me`, {
@@ -256,6 +297,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout,
         token: localToken,
         updateProfile,
+        signup,
       }}
     >
       {children}

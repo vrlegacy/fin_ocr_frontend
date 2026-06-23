@@ -8,6 +8,14 @@ import { useAuth } from "../context/AuthContext";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
 import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
+import {
   Upload,
   Camera,
   FileText,
@@ -261,16 +269,19 @@ export function OcrEntryPage() {
 
       <div className="flex-1 px-4 pb-6 md:p-8 pt-24 md:pt-28 w-full flex flex-col min-h-0 max-w-7xl mx-auto">
         {/* Navigation Header */}
-        <div className="mb-6">
-          <Button
-            onClick={() => navigate("/dashboard")}
-            variant="ghost"
-            className="px-0 text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-transparent transition-colors cursor-pointer"
-          >
-            <ArrowLeft size={16} className="mr-2" />
-            Back to Dashboard
-          </Button>
-        </div>
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink onClick={() => navigate("/dashboard")} className="cursor-pointer">
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Scan Bill</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
         {/* STEP 1: SCAN OR MANUAL ENTRY SELECTOR (SIDE BY SIDE) */}
         {step === 1 && (

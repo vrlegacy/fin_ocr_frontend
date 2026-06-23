@@ -3,6 +3,14 @@ import { useNavigate } from "react-router";
 import { Navbar } from "../components/navbar";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { toast } from "sonner";
@@ -66,7 +74,21 @@ export function SettingsPage() {
     <div className="flex min-h-screen transition-colors duration-300 flex-col bg-transparent relative pb-16">
       <Navbar />
 
-      <div className="flex-1 px-4 pb-6 md:p-8 pt-24 md:pt-28 min-w-0 max-w-3xl mx-auto w-full">
+      <div className="flex-1 px-4 pb-6 md:p-8 pt-24 md:pt-28 min-w-0 max-w-3xl mx-auto w-full animate-in fade-in duration-300">
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink onClick={() => navigate("/dashboard")} className="cursor-pointer">
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Settings & Profile</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
         <div className="mb-6 md:mb-8 text-center md:text-left">
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100 mb-1.5">
             Settings & Profile
