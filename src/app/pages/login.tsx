@@ -55,6 +55,21 @@ export function LoginPage() {
     }
   };
 
+  const handleTestUserLogin = async () => {
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      await loginWithEmailPassword("testuser@mail.com", "12345678");
+      toast.success("Logged in as Test User!");
+      navigate("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Failed to log in as test user");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
@@ -226,6 +241,15 @@ export function LoginPage() {
                   className="w-full h-11 rounded-xl text-xs font-bold uppercase tracking-wider text-white bg-[#10B981] hover:bg-[#059669] transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-1.5 shadow-md active:scale-95 duration-100 border-0"
                 >
                   {isSubmitting ? "Signing In..." : "Sign In"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleTestUserLogin}
+                  disabled={isSubmitting}
+                  className="w-full h-11 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-1.5 shadow-sm active:scale-95 duration-100 bg-transparent mt-3"
+                >
+                  Demo / Test User
                 </button>
               </form>
 

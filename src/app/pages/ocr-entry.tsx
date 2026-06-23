@@ -628,7 +628,7 @@ export function OcrEntryPage() {
                     <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">Transaction Amounts</h3>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
                       { key: "subtotal", label: "Subtotal", val: subtotal, setter: setSubtotal },
                       { key: "taxAmount", label: "Tax Amount / VAT", val: taxAmount, setter: setTaxAmount, isFlagged: flaggedFields.taxAmount },

@@ -233,7 +233,8 @@ export function HistoryPage() {
                 Expense Records ({filteredRecords.length})
               </h2>
 
-              <div className="overflow-x-auto">
+              {/* Desktop View (Table) */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full min-w-[1100px]">
                   <thead>
                     <tr style={{ borderBottom: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(15, 23, 42, 0.08)" }}>
@@ -332,6 +333,83 @@ export function HistoryPage() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Mobile View (Card List) */}
+              <div className="block md:hidden space-y-4">
+                {filteredRecords.map((record) => (
+                  <div
+                    key={record.id}
+                    className="p-4 rounded-2xl border bg-white/20 dark:bg-slate-900/20 flex flex-col gap-3.5 transition-all"
+                    style={{
+                      borderColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(15, 23, 42, 0.08)",
+                    }}
+                  >
+                    <div className="flex justify-between items-start gap-4">
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="font-extrabold text-sm text-slate-800 dark:text-slate-200">
+                            {record.merchantName}
+                          </h4>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#10B981]/15 text-[#10B981] uppercase tracking-wider leading-none">
+                            {record.category}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-slate-400 font-semibold mt-1">
+                          Invoice: {record.invoiceNumber}
+                        </p>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <span className="font-black text-sm text-[#10B981] block">
+                          {record.totalAmount}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-medium">
+                          Sub: {record.subtotal}
+                        </span>
+                      </div>
+                    </div>
+
+                    {record.itemsList && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400 bg-white/5 p-2 rounded-lg font-semibold truncate">
+                        {record.itemsList}
+                      </p>
+                    )}
+
+                    <div className="flex justify-between items-center border-t border-slate-200/10 pt-2.5">
+                      <div className="flex flex-col gap-1 text-left">
+                        <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1 leading-none">
+                          <CreditCard size={11} className="text-[#10B981]" /> {record.paymentMethod}
+                        </span>
+                        <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1 leading-none">
+                          <Calendar size={11} className="text-[#10B981]" /> {record.uploadedAt}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <Button
+                          onClick={() => navigate(`/result/${record.id}`)}
+                          variant="outline"
+                          className="h-8 px-3 rounded-xl flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider glass-button border hover:bg-[#10B981] hover:text-white dark:hover:bg-[#10B981]"
+                          style={{
+                            borderColor: theme === "dark" ? "rgba(255, 255, 255, 0.15)" : "rgba(15, 23, 42, 0.15)",
+                            color: theme === "dark" ? "#F8FAFC" : "#0F172A",
+                          }}
+                        >
+                          <Eye size={12} />
+                          View
+                        </Button>
+                        <Button
+                          onClick={() => handleDeleteRecord(record.id, record.merchantName)}
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 cursor-pointer"
+                        >
+                          <Trash2 size={12} />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {filteredRecords.length === 0 && (

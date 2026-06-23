@@ -7,6 +7,7 @@ export interface AuthUser {
   auth0_user_id: string;
   email: string;
   name?: string | null;
+  username?: string | null;
   picture?: string | null;
   role?: string | null;
   created_at?: string;
@@ -24,6 +25,7 @@ interface AuthContextType {
   resetPassword: (email: string, newPassword: string) => Promise<void>;
   logout: () => void;
   token: string | null;
+  updateProfile: (username: string, role: string) => Promise<void>;
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -199,19 +201,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateProfile = async (username: string, role: string) => {
+    if (!localToken) return;
+    const response = await fetch(`${apiUrl}/api/me`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localToken}`,
+      },
+      body: JSON.stringify({ username, role }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.detail || "Failed to update profile");
+    }
+
+    const updatedUser = await response.json();
+    setLocalAuth(localToken, updatedUser);
+  };
+
   const isAuthenticated = auth0.isAuthenticated || (!!localToken && !!localUser && !localLoading);
   const isLoading = auth0.isLoading || (!!localToken && localLoading);
 
   // Transform Auth0 user profile into normalized AuthUser if authenticated via Auth0
-  const normalizedUser = auth0.isAuthenticated && auth0.user
+  const normalizedUser: AuthUser | null = localUser
     ? {
-      auth0_user_id: auth0.user.sub || "",
-      email: auth0.user.email || "",
-      name: auth0.user.name || null,
-      picture: auth0.user.picture || null,
-      role: "User", // fallback role for social signins
-    }
-    : localUser;
+        ...localUser,
+        name: localUser.name || localUser.username || localUser.email.split("@")[0],
+        picture: auth0.isAuthenticated && auth0.user ? auth0.user.picture : localUser.picture || null,
+        role: localUser.role || "Personal",
+      }
+    : auth0.isAuthenticated && auth0.user
+      ? {
+          auth0_user_id: auth0.user.sub || "",
+          email: auth0.user.email || "",
+          name: auth0.user.name || null,
+          picture: auth0.user.picture || null,
+          role: "User",
+        }
+      : null;
 
   return (
     <AuthContext.Provider
@@ -226,6 +255,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         resetPassword,
         logout,
         token: localToken,
+        updateProfile,
       }}
     >
       {children}

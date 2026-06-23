@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
+import { useIsMobile } from "./ui/use-mobile";
 
 interface NavbarProps {
   className?: string;
@@ -21,12 +22,23 @@ export function Navbar({ className = "" }: NavbarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  const isMobile = useIsMobile();
   
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isScrolledDown, setIsScrolledDown] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  const getInitials = (name: string) => {
+    if (!name) return "U";
+    const cleanName = name.includes("@") ? name.split("@")[0] : name;
+    const parts = cleanName.split(/[ ._-]/).filter(Boolean);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return cleanName.slice(0, 2).toUpperCase();
+  };
 
   // Collapse profile dropdown when clicking outside
   useEffect(() => {
@@ -78,8 +90,8 @@ export function Navbar({ className = "" }: NavbarProps) {
         }}
         className="dynamic-island-container text-white flex flex-col items-center overflow-hidden"
         style={{
-          width: isIslandOpened ? "560px" : "190px",
-          height: isExpanded ? "210px" : "44px",
+          width: isIslandOpened ? "min(560px, calc(100vw - 32px))" : "190px",
+          height: isExpanded ? (isMobile ? "270px" : "165px") : "44px",
           borderRadius: isExpanded ? "28px" : "22px",
         }}
       >
@@ -129,7 +141,7 @@ export function Navbar({ className = "" }: NavbarProps) {
                     }`}
                   >
                     <Icon size={12} />
-                    <span>{route.label}</span>
+                    <span className="hidden sm:inline">{route.label}</span>
                   </button>
                 );
               })}
@@ -141,9 +153,17 @@ export function Navbar({ className = "" }: NavbarProps) {
             onClick={() => setIsExpanded(!isExpanded)}
             className="flex items-center gap-1.5 cursor-pointer hover:opacity-90 transition-opacity"
           >
-            <div className="w-6 h-6 rounded-full flex items-center justify-center text-white bg-slate-800 text-[10px] font-bold border border-white/10 shadow-inner">
-              DA
-            </div>
+            {user?.picture ? (
+              <img 
+                src={user.picture} 
+                alt="Avatar" 
+                className="w-6 h-6 rounded-full object-cover border border-white/10 shadow-inner"
+              />
+            ) : (
+              <div className="w-6 h-6 rounded-full flex items-center justify-center text-white bg-slate-800 text-[10px] font-bold border border-white/10 shadow-inner">
+                {getInitials(user?.name || user?.email || "User")}
+              </div>
+            )}
             {isIslandOpened && (
               <ChevronDown 
                 size={12} 
@@ -156,49 +176,82 @@ export function Navbar({ className = "" }: NavbarProps) {
 
         {/* Bottom Section: Expandable Menu Options (Visible when expanded) */}
         <div 
-          className="w-48 ml-auto flex flex-col gap-1 px-3 mt-1.5 border-t border-white/5 pt-2.5 transition-all duration-300 ease-in-out"
+          className="w-full flex flex-col sm:flex-row gap-4 px-4 mt-2 border-t border-white/5 pt-3 transition-all duration-300 ease-in-out"
           style={{
             opacity: isExpanded ? 1 : 0,
             pointerEvents: isExpanded ? "auto" : "none",
           }}
         >
-          {/* Theme switcher option */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleTheme();
-            }}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-colors w-full cursor-pointer hover:bg-white/10 duration-150 text-slate-300 hover:text-white"
-          >
-            {theme === 'dark' ? <Sun size={13} className="text-amber-400" /> : <Moon size={13} className="text-emerald-400" />}
-            <span className="text-[10px] font-bold uppercase tracking-wider">Theme</span>
-          </button>
-
-          {/* Settings Option */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
+          {/* Profile Details Panel (Real User Info, Interactable) */}
+          <div 
+            onClick={() => {
               navigate("/settings");
               setIsExpanded(false);
             }}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-colors w-full cursor-pointer hover:bg-white/10 duration-150 text-slate-300 hover:text-white"
+            className="flex-1 min-w-0 flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-colors cursor-pointer group"
           >
-            <Settings size={13} className="text-slate-400" />
-            <span className="text-[10px] font-bold uppercase tracking-wider">Settings</span>
-          </button>
+            {user?.picture ? (
+              <img 
+                src={user.picture} 
+                alt="Avatar" 
+                className="w-10 h-10 rounded-full object-cover border border-white/10 shadow-md group-hover:scale-105 transition-transform"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full flex items-center justify-center text-white bg-slate-800 text-xs font-bold border border-white/10 shadow-inner group-hover:scale-105 transition-transform">
+                {getInitials(user?.name || user?.email || "User")}
+              </div>
+            )}
+            <div className="flex-1 min-w-0 text-left">
+              <div className="text-xs font-extrabold text-white truncate">{user?.name || "User"}</div>
+              <div className="text-[10px] text-slate-400 truncate mt-0.5">{user?.email || "user@example.com"}</div>
+              <div className="mt-1.5 flex">
+                <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 uppercase tracking-widest leading-none">
+                  {user?.role || "Personal"}
+                </span>
+              </div>
+            </div>
+          </div>
 
-          {/* Logout Option */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              logout();
-              setIsExpanded(false);
-            }}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-colors w-full cursor-pointer hover:bg-red-500/20 text-red-400 duration-150"
-          >
-            <LogOut size={13} className="text-red-500" />
-            <span className="text-[10px] font-bold uppercase tracking-wider">Logout</span>
-          </button>
+          {/* Menu Action Options */}
+          <div className="w-full sm:w-44 flex flex-col gap-1.5 flex-shrink-0 justify-center">
+            {/* Theme switcher option */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleTheme();
+              }}
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-colors w-full cursor-pointer hover:bg-white/10 duration-150 text-slate-300 hover:text-white"
+            >
+              {theme === 'dark' ? <Sun size={13} className="text-amber-400" /> : <Moon size={13} className="text-emerald-400" />}
+              <span className="text-[10px] font-bold uppercase tracking-wider">Theme</span>
+            </button>
+
+            {/* Settings Option */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/settings");
+                setIsExpanded(false);
+              }}
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-colors w-full cursor-pointer hover:bg-white/10 duration-150 text-slate-300 hover:text-white"
+            >
+              <Settings size={13} className="text-slate-400" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Settings</span>
+            </button>
+
+            {/* Logout Option */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                logout();
+                setIsExpanded(false);
+              }}
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-colors w-full cursor-pointer hover:bg-red-500/20 text-red-400 duration-150"
+            >
+              <LogOut size={13} className="text-red-500" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Logout</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
