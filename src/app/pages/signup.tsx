@@ -13,7 +13,6 @@ export function SignupPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,10 +23,12 @@ export function SignupPage() {
     setError(null);
 
     try {
-      await signup(username, email, role, password);
+      console.debug("Signup request payload:", { username, email, password });
+      await signup(username, email, password);
       toast.success("Account created and logged in successfully!");
       navigate("/dashboard");
     } catch (err: any) {
+      console.error("Signup failed:", err);
       setError(err.message || "Failed to create account");
     } finally {
       setIsSubmitting(false);
@@ -137,27 +138,6 @@ export function SignupPage() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-bold text-slate-500 dark:text-slate-400">
-                Financial Persona
-              </label>
-              <select
-                value={role}
-                onChange={(e) => {
-                  setRole(e.target.value);
-                  setError(null);
-                }}
-                className="w-full h-11 px-3.5 rounded-xl border outline-none text-sm font-semibold transition-all duration-150 glass-input focus:border-[#10B981] bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300"
-                required
-              >
-                <option value="" disabled>Select your usage role</option>
-                <option value="Personal">Personal / Individual User</option>
-                <option value="Business">Business Owner / SME</option>
-                <option value="Advisor">Financial Advisor / Accountant</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 dark:text-slate-400">
                 Password
               </label>
               <div className="relative w-full">
@@ -207,7 +187,7 @@ export function SignupPage() {
           <div className="text-center text-slate-500 dark:text-slate-400 text-xs font-semibold">
             Already have an account?{" "}
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/login")}
               className="font-bold text-[#10B981] hover:underline cursor-pointer bg-transparent border-0 p-0"
             >
               Sign In

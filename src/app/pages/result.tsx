@@ -14,6 +14,7 @@ import { Badge } from "../components/ui/badge";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "sonner";
+import { apiUrl } from "../lib/api";
 import {
   ArrowLeft,
   Copy,
@@ -54,8 +55,6 @@ const fieldSections = [
     ],
   },
 ] as const;
-
-const apiUrl = (import.meta.env as any).VITE_API_URL || "https://finocr.onrender.com";
 
 export function ResultPage() {
   const navigate = useNavigate();

@@ -7,6 +7,7 @@ import { Input } from "../components/ui/input";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "sonner";
+import { apiUrl } from "../lib/api";
 import { Search, Calendar, Eye, Trash2, ShieldAlert, Hash, Receipt, CreditCard } from "lucide-react";
 
 interface HistoryRecord {
@@ -24,8 +25,6 @@ interface HistoryRecord {
   status: "Verified" | "Needs Review";
 }
 
-
-const apiUrl = (import.meta.env as any).VITE_API_URL || "https://finocr.onrender.com";
 
 export function HistoryPage() {
   const navigate = useNavigate();
