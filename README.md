@@ -1,5 +1,5 @@
 # Fin OCR Frontend
-
+live application url : https://fin-ocr-frontend.pages.dev
 A modern React + Vite frontend for a financial OCR application with invoice/receipt upload, expense extraction, analytics, and user authentication.
 
 ## Features
