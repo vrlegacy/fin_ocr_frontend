@@ -3,6 +3,7 @@ import { ThemeProvider } from '../context/ThemeContext';
 import { AuthProvider } from '../context/AuthContext';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { Toaster } from './ui/sonner';
+import { apiUrl } from '../lib/api';
 
 export function Layout() {
   const domain = import.meta.env.VITE_AUTH0_DOMAIN || "dev-f26bdihea4sqt7k4.us.auth0.com";
@@ -15,7 +16,7 @@ export function Layout() {
         clientId={clientId}
         authorizationParams={{
           redirect_uri: window.location.origin,
-          audience: import.meta.env.VITE_API_URL || "https://finocr.onrender.com",
+          audience: apiUrl,
         }}
       >
         <AuthProvider>

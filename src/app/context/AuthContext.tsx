@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { toast } from "sonner";
+import { apiUrl } from "../lib/api";
 
 export interface AuthUser {
   id?: number;
@@ -9,7 +10,6 @@ export interface AuthUser {
   name?: string | null;
   username?: string | null;
   picture?: string | null;
-  role?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -25,11 +25,35 @@ interface AuthContextType {
   resetPassword: (email: string, newPassword: string) => Promise<void>;
   logout: () => void;
   token: string | null;
-  updateProfile: (username: string, role: string) => Promise<void>;
+  updateProfile: (username: string) => Promise<void>;
+  signup: (username: string, email: string, password: string) => Promise<void>;
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const apiUrl = (import.meta.env as any).VITE_API_URL || "https://finocr.onrender.com";
+const formatErrorMessage = (data: any, fallback: string): string => {
+  if (!data) return fallback;
+  if (typeof data.detail === "string") {
+    return data.detail;
+  }
+  if (Array.isArray(data.detail)) {
+    return data.detail
+      .map((err: any) => {
+        const fieldName = err.loc && err.loc.length > 1 ? err.loc[1] : "";
+        return fieldName ? `${fieldName}: ${err.msg}` : err.msg;
+      })
+      .join(", ");
+  }
+  if (data.description) {
+    return data.description;
+  }
+  if (data.message) {
+    return data.message;
+  }
+  if (data.detail && typeof data.detail === "object") {
+    return JSON.stringify(data.detail);
+  }
+  return fallback;
+};
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const auth0 = useAuth0();
@@ -66,17 +90,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const getAuth0Token = async () => {
-      if (auth0.isAuthenticated) {
+      if (auth0.isAuthenticated && auth0.user) {
         try {
           const token = await auth0.getAccessTokenSilently();
-          setLocalAuth(token, localUser);
+          
+          // Verify with local backend if user is registered
+          const response = await fetch(`${apiUrl}/api/me`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          
+          if (response.ok) {
+            const dbUser = await response.json();
+            setLocalAuth(token, dbUser);
+            // Immediately redirect to dashboard on successful Google Login
+            window.location.href = "/dashboard";
+          } else {
+            // Not registered or other backend issue - force logout from Auth0
+            toast.error("You are not registered in the system. Please register first.");
+            setLocalAuth(null, null);
+            auth0.logout({
+              logoutParams: {
+                returnTo: window.location.origin,
+              },
+            });
+          }
         } catch (error) {
           console.error("Error getting Auth0 token:", error);
         }
       }
     };
     getAuth0Token();
-  }, [auth0.isAuthenticated]);
+  }, [auth0.isAuthenticated, auth0.user]);
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -120,7 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.detail || "Invalid email or password");
+      throw new Error(formatErrorMessage(data, "Invalid email or password"));
     }
 
     setLocalAuth(data.access_token, data.user);
@@ -181,7 +227,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.detail || "Failed to reset password");
+      throw new Error(formatErrorMessage(data, "Failed to reset password"));
     }
 
     setLocalAuth(data.access_token, data.user);
@@ -201,7 +247,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const updateProfile = async (username: string, role: string) => {
+  const signup = async (username: string, email: string, password: string) => {
+    const response = await fetch(`${apiUrl}/auth/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, email, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(formatErrorMessage(data, "Failed to create account"));
+    }
+
+    setLocalAuth(data.access_token, data.user);
+  };
+
+  const updateProfile = async (username: string) => {
     if (!localToken) return;
     const response = await fetch(`${apiUrl}/api/me`, {
       method: "PUT",
@@ -209,12 +273,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localToken}`,
       },
-      body: JSON.stringify({ username, role }),
+      body: JSON.stringify({ username }),
     });
 
     if (!response.ok) {
       const data = await response.json();
-      throw new Error(data.detail || "Failed to update profile");
+      throw new Error(formatErrorMessage(data, "Failed to update profile"));
     }
 
     const updatedUser = await response.json();
@@ -230,7 +294,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         ...localUser,
         name: localUser.name || localUser.username || localUser.email.split("@")[0],
         picture: auth0.isAuthenticated && auth0.user ? auth0.user.picture : localUser.picture || null,
-        role: localUser.role || "Personal",
       }
     : auth0.isAuthenticated && auth0.user
       ? {
@@ -238,7 +301,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: auth0.user.email || "",
           name: auth0.user.name || null,
           picture: auth0.user.picture || null,
-          role: "User",
         }
       : null;
 
@@ -256,6 +318,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout,
         token: localToken,
         updateProfile,
+        signup,
       }}
     >
       {children}

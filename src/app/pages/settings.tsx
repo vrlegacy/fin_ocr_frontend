@@ -3,6 +3,14 @@ import { useNavigate } from "react-router";
 import { Navbar } from "../components/navbar";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { toast } from "sonner";
@@ -15,7 +23,6 @@ export function SettingsPage() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState("");
-  const [role, setRole] = useState("Personal");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -27,7 +34,6 @@ export function SettingsPage() {
   useEffect(() => {
     if (user) {
       setUsername(user.name || "");
-      setRole(user.role || "Personal");
     }
   }, [user]);
 
@@ -39,7 +45,7 @@ export function SettingsPage() {
     setIsSaving(true);
     try {
       if (updateProfile) {
-        await updateProfile(username, role);
+        await updateProfile(username);
         setIsEditing(false);
         toast.success("Profile saved successfully!");
       } else {
@@ -66,7 +72,21 @@ export function SettingsPage() {
     <div className="flex min-h-screen transition-colors duration-300 flex-col bg-transparent relative pb-16">
       <Navbar />
 
-      <div className="flex-1 px-4 pb-6 md:p-8 pt-24 md:pt-28 min-w-0 max-w-3xl mx-auto w-full">
+      <div className="flex-1 px-4 pb-6 md:p-8 pt-24 md:pt-28 min-w-0 max-w-3xl mx-auto w-full animate-in fade-in duration-300">
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink onClick={() => navigate("/dashboard")} className="cursor-pointer">
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Settings & Profile</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
         <div className="mb-6 md:mb-8 text-center md:text-left">
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-800 dark:text-slate-100 mb-1.5">
             Settings & Profile
@@ -113,7 +133,6 @@ export function SettingsPage() {
                       onClick={() => {
                         setIsEditing(false);
                         setUsername(user?.name || "");
-                        setRole(user?.role || "Personal");
                       }}
                       variant="outline"
                       className="h-8 px-3 rounded-lg text-xs font-semibold text-red-500 border-red-200/20 hover:bg-red-50 cursor-pointer"
@@ -133,7 +152,7 @@ export function SettingsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 {/* Username */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1.5 sm:col-span-2">
                   <label className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                     <User size={13} className="text-[#10B981]" /> Username / Display Name
                   </label>
@@ -148,32 +167,6 @@ export function SettingsPage() {
                         : "border-transparent opacity-80 cursor-not-allowed bg-transparent"
                     }`}
                   />
-                </div>
-
-                {/* Financial Persona / Role */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                    <Shield size={13} className="text-[#10B981]" /> Financial Persona
-                  </label>
-                  {isEditing ? (
-                    <select
-                      value={role}
-                      onChange={(e) => setRole(e.target.value)}
-                      className="w-full h-10 px-3 border rounded-xl text-sm font-semibold transition-all duration-200 glass-input border-[#10B981] focus:border-[#10B981] bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300"
-                    >
-                      <option value="Personal">Personal / Individual</option>
-                      <option value="Business">Business / SME</option>
-                      <option value="Advisor">Advisor / Accountant</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  ) : (
-                    <input
-                      type="text"
-                      value={role}
-                      disabled
-                      className="w-full h-10 px-3 border border-transparent rounded-xl text-sm font-semibold opacity-80 cursor-not-allowed bg-transparent"
-                    />
-                  )}
                 </div>
 
                 {/* Email Address (Read-only) */}

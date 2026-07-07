@@ -204,11 +204,6 @@ export function Navbar({ className = "" }: NavbarProps) {
             <div className="flex-1 min-w-0 text-left">
               <div className="text-xs font-extrabold text-white truncate">{user?.name || "User"}</div>
               <div className="text-[10px] text-slate-400 truncate mt-0.5">{user?.email || "user@example.com"}</div>
-              <div className="mt-1.5 flex">
-                <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 uppercase tracking-widest leading-none">
-                  {user?.role || "Personal"}
-                </span>
-              </div>
             </div>
           </div>
 
